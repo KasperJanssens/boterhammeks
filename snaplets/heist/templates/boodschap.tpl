@@ -14,6 +14,12 @@
     <dfInputText ref="etendecollegae" />
     <br>
 
+    <dfInputSelectGroup ref="meerderecollegae">
+      <option>Plan1
+      <option>Plan2
+      <option>Plan3
+    </dfInputSelectGroup>
+
     <dfInputSubmit value="Submit" />
   </dfForm>
 </apply>
