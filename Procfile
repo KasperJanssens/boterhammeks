@@ -1,1 +1,1 @@
-web: cabal run -- -p 5432
+web: cabal run --  -p 5432
