@@ -3,22 +3,24 @@
     <dfChildErrorList ref="" />
 
     <dfLabel ref="boodschapper">Boodschapper: </dfLabel>
-    <dfInputText ref="boodschapper" />
+    <dfInputSelect ref="boodschapper" />
     <br>
 
     <dfLabel ref="bedrag">Bedrag: </dfLabel>
     <dfInputText ref="bedrag" />
     <br>
 
-    <dfLabel ref="etendecollegae">Etende Collegae: </dfLabel>
-    <dfInputText ref="etendecollegae" />
-    <br>
 
-    <dfInputSelectGroup ref="meerderecollegae">
-      <option>Plan1
-      <option>Plan2
-      <option>Plan3
-    </dfInputSelectGroup>
+    <dfInputList ref="names">
+      <dfListItem>
+        <li itemAttrs>
+        <dfInputText ref="naam" readonly />
+        <dfInputCheckbox ref="eetMee"/>
+        <br>
+        </li>
+      </dfListItem>
+    </dfInputList>
+
 
     <dfInputSubmit value="Submit" />
   </dfForm>

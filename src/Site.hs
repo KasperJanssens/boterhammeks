@@ -17,6 +17,7 @@ import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth
 import           Snap.Snaplet.Auth.Backends.PostgresqlSimple
+import qualified Snap.Snaplet.PostgresqlSimple as SnapPostgres
 import           Snap.Snaplet.Heist
 import           Snap.Snaplet.Session.Backends.CookieSession
 import           Snap.Util.FileServe
@@ -28,9 +29,13 @@ import qualified Debt
 import qualified Boodschap
 import qualified Text.Digestive.Snap as DigestiveSnap
 import qualified Text.Digestive.Heist as DigestiveHeist
-
+import           Data.List
+import qualified Data.Text as Text
+import qualified Data.Double.Conversion.Text as DoubleConversion
 ------------------------------------------------------------------------------
 import           Application
+import User
+import Data.Function
 
 
 ------------------------------------------------------------------------------
@@ -66,20 +71,43 @@ handleNewUser = method GET handleForm <|> method POST handleFormSubmit
     handleForm = render "new_user"
     handleFormSubmit = registerUser "login" "password" >> redirect "/"
 
+getAllUsers :: Handler App App [User]
+getAllUsers = SnapPostgres.query_ "select login from snap_auth_user"
+
 handleOverview :: [Debt.Debt] -> Handler App (AuthManager App) ()
 handleOverview allDebts =
   heistLocal (I.bindSplices ("schuld" ## spliceDebts allDebts)) $ render "lijst"
   where spliceDebts = I.mapSplices (I.runChildrenWith . debtSplices)
         debtSplices (Debt.Debt name debt) = do
           "name" ## I.textSplice name
-          "debt" ## I.textSplice debt
+          "debt" ## I.textSplice $ DoubleConversion.toShortest debt
 
 boodschapFormHandler :: Handler App App ()
 boodschapFormHandler = do
-  (view, result) <- DigestiveSnap.runForm "boodschap" Boodschap.boodschapForm
+  allUsers <- getAllUsers
+  (view, result) <- DigestiveSnap.runForm "boodschap" $ Boodschap.boodschapForm allUsers
   case result of
-    Just x  -> Debt.addDebt "jef" "klak"
+    Just boodschap -> do
+      let newDebts  = calculateNewDebts boodschap
+      currentDebts <- Debt.getAllDebts
+      let dbaseInstructions = foldl (
+                \ dbInstructions newDebtForX -> case findIndex (((==) `on` Debt.name) newDebtForX) currentDebts of
+                                            Nothing -> Debt.insert newDebtForX : dbInstructions
+                                            Just index ->
+                                                let oldDebtForX = currentDebts !! index in
+                                                Debt.update (Debt.merge oldDebtForX newDebtForX) : dbInstructions
+            ) [] newDebts
+      sequence_ dbaseInstructions
+      redirect "/"
     Nothing -> heistLocal (DigestiveHeist.bindDigestiveSplices view) $ render "boodschap"
+
+
+calculateNewDebts ::Boodschap.Boodschap -> [Debt.Debt]
+calculateNewDebts (Boodschap.Boodschap boodschapper bedrag eters) =
+  let bedragPerEter = (bedrag / fromIntegral (1 + length eters)) in
+  let boodschapperDebt = Debt.Debt boodschapper (fromIntegral (length eters)  * bedragPerEter) in
+  let newDebts = (\meeEter -> Debt.Debt (Boodschap.naam meeEter) (negate bedragPerEter)) <$> eters in
+  boodschapperDebt : newDebts
 ------------------------------------------------------------------------------
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]

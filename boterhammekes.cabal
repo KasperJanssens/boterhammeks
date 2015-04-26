@@ -38,7 +38,8 @@ Executable boterhammekes
     digestive-functors,
     digestive-functors-snap,
     digestive-functors-heist,
-    postgresql-simple
+    postgresql-simple,
+    double-conversion
 
   if flag(old-base)
     build-depends:
