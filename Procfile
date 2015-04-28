@@ -1,1 +1,1 @@
-web: cabal run -- -p 5432
+web: dist/build/boterhammekes/boterhammekes -p 5433
