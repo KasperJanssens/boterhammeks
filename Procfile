@@ -1,1 +1,1 @@
-web: dist/build/boterhammekes/boterhammekes -p 5433
+web: bin/boterhammekes -p 5433
