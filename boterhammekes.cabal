@@ -23,23 +23,23 @@ Executable boterhammekes
   main-is: Main.hs
 
   Build-depends:
-    bytestring                >= 0.9.1   && < 0.11,
-    heist                     >= 0.14    && < 0.15,
-    MonadCatchIO-transformers >= 0.2.1   && < 0.4,
-    mtl                       >= 2       && < 3,
-    snap                      >= 0.13    && < 0.14,
-    snap-core                 >= 0.9     && < 0.10,
-    snap-server               >= 0.9     && < 0.10,
-    snap-loader-static        >= 0.9     && < 0.10,
-    text                      >= 0.11    && < 1.3,
-    time                      >= 1.1     && < 1.5,
-    xmlhtml                   >= 0.1     && < 0.3,
-    snaplet-postgresql-simple >= 0.4     && < 0.5,
-    digestive-functors,
-    digestive-functors-snap,
+    bytestring                == 0.10.4.0,
+    heist                     == 0.14.1,
+    MonadCatchIO-transformers == 0.3.1.3,
+    mtl                       == 2.1.3.1,
+    snap                      == 0.13.3.2,
+    snap-core                 == 0.9.7.0,
+    snap-server               == 0.9.5.0,
+    snap-loader-static        == 0.9.0.2,
+    text                      == 1.1.1.3,
+    time                      == 1.4.2,
+    xmlhtml                   == 0.2.3.4,
+    snaplet-postgresql-simple == 0.4.1.1,
+    digestive-functors        == 0.7.1.5,
+    digestive-functors-snap   == 0.6.1.1,
     digestive-functors-heist,
-    postgresql-simple,
-    double-conversion
+    postgresql-simple         == 0.4.10.0,
+    double-conversion         == 2.0.1.0
 
   if flag(old-base)
     build-depends:
@@ -47,8 +47,8 @@ Executable boterhammekes
       lens                      >= 3.7.6    && < 3.8
   else
     build-depends:
-      base                      >= 4.4      && < 5,
-      lens                      >= 3.7.6    && < 4.7
+      base                      == 4.7.0.2,
+      lens                      == 4.6.0.1
 
   if flag(development)
     build-depends:
